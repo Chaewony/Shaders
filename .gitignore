@@ -30,3 +30,8 @@
 *.exe
 *.out
 *.app
+
+Shaders/.vs/Shaders/v16/ipch
+Shaders/.vs/Shaders/v16/Browse.VC.db
+Shaders/Debug
+Shaders/Shaders/Debug
