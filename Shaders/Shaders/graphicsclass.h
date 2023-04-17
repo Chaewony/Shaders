@@ -12,6 +12,8 @@
 #include "cameraclass.h"
 #include "modelclass.h"
 #include "textureshaderclass.h"
+#include "lightclass.h"
+#include "phongshaderclass.h"
 
 
 /////////////
@@ -47,6 +49,8 @@ private:
 	CameraClass* m_Camera;
 	ModelClass* m_Model;
 	TextureShaderClass* m_TextureShader;
+	LightClass* m_Light;
+	PhongShaderClass* m_PhongShader;
 };
 
 #endif

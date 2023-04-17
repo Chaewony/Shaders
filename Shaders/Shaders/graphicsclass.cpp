@@ -10,6 +10,8 @@ GraphicsClass::GraphicsClass()
 	m_Camera = 0;
 	m_Model = 0;
 	m_TextureShader = 0;
+	m_Light = 0;
+	m_PhongShader = 0;
 }
 
 
@@ -85,12 +87,56 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
+	// Create the light object.
+	m_Light = new LightClass;
+	if (!m_Light)
+	{
+		return false;
+	}
+
+	// Initialize the light object.
+	m_Light->SetAmbientColor(0.5f, 0.5f, 0.5f, 1.0f);
+	m_Light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
+	m_Light->SetDirection(1.0f, 1.0f, 1.0f);
+	m_Light->SetSpecularColor(1.0f, 1.0f, 1.0f, 1.0f);
+	m_Light->SetSpecularPower(32.0f);
+
+	// Create the light shader object.
+	m_PhongShader = new PhongShaderClass;
+	if (!m_PhongShader)
+	{
+		return false;
+	}
+
+	// Initialize the light shader object.
+	result = m_PhongShader->Initialize(m_D3D->GetDevice(), hwnd);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the light shader object.", L"Error", MB_OK);
+		return false;
+	}
+
 	return true;
 }
 
 
 void GraphicsClass::Shutdown()
 {
+	// Release the light object.
+	if (m_Light)
+	{
+		delete m_Light;
+		m_Light = 0;
+	}
+
+	// Release the light shader object.
+	if (m_PhongShader)
+	{
+		m_PhongShader->Shutdown();
+		delete m_PhongShader;
+		m_PhongShader = 0;
+	}
+
 	// Release the texture shader object.
 	if(m_TextureShader)
 	{
@@ -161,7 +207,6 @@ bool GraphicsClass::Render(float rotation)
 	XMMATRIX worldMatrix, viewMatrix, projectionMatrix;
 	bool result;
 
-
 	// Clear the buffers to begin the scene.
 	m_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -183,6 +228,22 @@ bool GraphicsClass::Render(float rotation)
 	result = m_TextureShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(), 
 		worldMatrix, viewMatrix, projectionMatrix, m_Model->GetTexture());
 	if(!result)
+	{
+		return false;
+	}
+
+	m_D3D->GetWorldMatrix(worldMatrix);
+
+	worldMatrix *= XMMatrixTranslation(5.0f, 0.0f, 0.0f);
+
+	m_Model->Render(m_D3D->GetDeviceContext());
+
+	result = m_PhongShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(),
+		worldMatrix, viewMatrix, projectionMatrix,
+		m_Model->GetTexture(),
+		m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(),
+		m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
+	if (!result)
 	{
 		return false;
 	}
