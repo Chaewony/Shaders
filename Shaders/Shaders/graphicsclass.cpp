@@ -64,7 +64,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Initialize the model object.
-	result = m_Model->Initialize(m_D3D->GetDevice(), L"./data/cube.obj", L"./data/seafloor.dds");
+	result = m_Model->Initialize(m_D3D->GetDevice(), L"./data/teapot.obj", L"./data/blue.dds");
 //	result = m_Model->Initialize(m_D3D->GetDevice(), L"./data/chair.obj", L"./data/chair_d.dds");
 	if(!result)
 	{
@@ -116,6 +116,21 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
+	// Create the light shader object.
+	m_ToonShader = new ToonShaderClass;
+	if (!m_ToonShader)
+	{
+		return false;
+	}
+
+	// Initialize the light shader object.
+	result = m_ToonShader->Initialize(m_D3D->GetDevice(), hwnd);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the light shader object.", L"Error", MB_OK);
+		return false;
+	}
+
 	return true;
 }
 
@@ -127,6 +142,14 @@ void GraphicsClass::Shutdown()
 	{
 		delete m_Light;
 		m_Light = 0;
+	}
+
+	// Release the light shader object.
+	if (m_ToonShader)
+	{
+		m_ToonShader->Shutdown();
+		delete m_ToonShader;
+		m_ToonShader = 0;
 	}
 
 	// Release the light shader object.
@@ -180,11 +203,11 @@ bool GraphicsClass::Frame()
 
 
 	// Update the rotation variable each frame.
-	/*rotation += (float)XM_PI * 0.01f;
+	rotation += (float)XM_PI * 0.01f;
 	if (rotation > 360.0f)
 	{
 		rotation -= 360.0f;
-	}*/
+	}
 
 	// Render the graphics scene.
 	result = Render(rotation);
@@ -233,12 +256,28 @@ bool GraphicsClass::Render(float rotation)
 	}
 
 	m_D3D->GetWorldMatrix(worldMatrix);
-
+	worldMatrix = XMMatrixRotationY(rotation);
 	worldMatrix *= XMMatrixTranslation(5.0f, 0.0f, 0.0f);
 
 	m_Model->Render(m_D3D->GetDeviceContext());
 
 	result = m_PhongShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(),
+		worldMatrix, viewMatrix, projectionMatrix,
+		m_Model->GetTexture(),
+		m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(),
+		m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
+	if (!result)
+	{
+		return false;
+	}
+
+	m_D3D->GetWorldMatrix(worldMatrix);
+	worldMatrix = XMMatrixRotationY(rotation);
+	worldMatrix *= XMMatrixTranslation(10.0f, 0.0f, 0.0f);
+
+	m_Model->Render(m_D3D->GetDeviceContext());
+
+	result = m_ToonShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(),
 		worldMatrix, viewMatrix, projectionMatrix,
 		m_Model->GetTexture(),
 		m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(),

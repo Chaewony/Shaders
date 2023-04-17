@@ -32,6 +32,7 @@
     <ClCompile Include="systemclass.cpp" />
     <ClCompile Include="textureclass.cpp" />
     <ClCompile Include="textureshaderclass.cpp" />
+    <ClCompile Include="toonshaderclass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AlignedAllocationPolicy.h" />
@@ -47,6 +48,7 @@
     <ClInclude Include="systemclass.h" />
     <ClInclude Include="textureclass.h" />
     <ClInclude Include="textureshaderclass.h" />
+    <ClInclude Include="toonshaderclass.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="data\color.ps" />
@@ -55,6 +57,8 @@
     <None Include="data\phong.vs" />
     <None Include="data\texture.ps" />
     <None Include="data\texture.vs" />
+    <None Include="data\toon.ps" />
+    <None Include="data\toon.vs" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

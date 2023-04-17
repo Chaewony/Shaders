@@ -1,0 +1,58 @@
+////////////////////////////////////////////////////////////////////////////////
+// Filename: light.ps
+////////////////////////////////////////////////////////////////////////////////
+
+
+/////////////
+// GLOBALS //
+/////////////
+Texture2D shaderTexture;
+SamplerState SampleType;
+
+cbuffer LightBuffer
+{
+	float4 ambientColor;
+	float4 diffuseColor;
+    float3 lightDirection;
+    float specularPower;
+    float4 specularColor;
+};
+
+
+//////////////
+// TYPEDEFS //
+//////////////
+struct PixelInputType
+{
+    float4 position : SV_POSITION;
+    float2 tex : TEXCOORD0;
+	float3 normal : NORMAL;
+	float3 viewDirection : TEXCOORD1;
+};
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Pixel Shader
+////////////////////////////////////////////////////////////////////////////////
+float4 LightPixelShader(PixelInputType input) : SV_TARGET
+{
+	float3 lightDir;
+	float lightIntensity;
+	float4 color;
+	float4 textureColor;
+	textureColor = shaderTexture.Sample(SampleType, input.tex);
+	float3 diffuse = saturate(textureColor); //디퓨즈 값
+
+	// Invert the light direction for calculations.
+    lightDir = -lightDirection;
+
+    // Calculate the amount of light on this pixel.
+    lightIntensity = saturate(dot(input.normal, lightDir));
+
+	diffuse += (diffuseColor * lightIntensity);
+
+
+	diffuse = ceil(diffuse * 5) / 5.0f; //반올림
+
+	return float4( textureColor * diffuse.xyz, 1); //최종 값
+}

@@ -54,6 +54,9 @@
     <ClCompile Include="lightclass.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="toonshaderclass.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AlignedAllocationPolicy.h">
@@ -95,6 +98,9 @@
     <ClInclude Include="phongshaderclass.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="toonshaderclass.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="data\color.vs">
@@ -113,6 +119,12 @@
       <Filter>리소스 파일</Filter>
     </None>
     <None Include="data\phong.vs">
+      <Filter>리소스 파일</Filter>
+    </None>
+    <None Include="data\toon.ps">
+      <Filter>리소스 파일</Filter>
+    </None>
+    <None Include="data\toon.vs">
       <Filter>리소스 파일</Filter>
     </None>
   </ItemGroup>
