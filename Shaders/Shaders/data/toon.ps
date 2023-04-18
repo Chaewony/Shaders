@@ -54,5 +54,21 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 
 	diffuse = ceil(diffuse * 5) / 5.0f; //반올림
 
-	return float4( textureColor * diffuse.xyz, 1); //최종 값
+	color = float4( textureColor * diffuse.xyz, 1);
+
+	// Edge 계산
+    float depth = input.position.z / input.position.w;
+    float2 dx = ddx(input.position.xy / input.position.w);
+    float2 dy = ddy(input.position.xy / input.position.w);
+
+    float edge = max(abs(dx.x), max(abs(dy.y), 0.0f));
+
+    float EdgeWidth = 0.5f;
+    float4 EdgeColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
+
+    edge = max(0, edge - EdgeWidth) / (1 - EdgeWidth);
+    edge = pow(edge, 4);
+    color = lerp(color, EdgeColor, edge);
+
+	return color; //최종 값
 }
