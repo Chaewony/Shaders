@@ -30,18 +30,23 @@ struct PixelInputType
 	float3 viewDirection : TEXCOORD1;
 };
 
-
 ////////////////////////////////////////////////////////////////////////////////
 // Pixel Shader
 ////////////////////////////////////////////////////////////////////////////////
 float4 LightPixelShader(PixelInputType input) : SV_TARGET
 {
+    float4 textureColor;
 	float3 lightDir;
 	float lightIntensity;
 	float4 color;
-	float4 textureColor;
+	float3 reflection;
+    float4 specular;
+
 	textureColor = shaderTexture.Sample(SampleType, input.tex);
-	float3 diffuse = saturate(textureColor); //디퓨즈 값
+
+    color = ambientColor;
+
+    specular = float4(0.0f, 0.0f, 0.0f, 0.0f);
 
 	// Invert the light direction for calculations.
     lightDir = -lightDirection;
@@ -49,14 +54,27 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
     // Calculate the amount of light on this pixel.
     lightIntensity = saturate(dot(input.normal, lightDir));
 
-	diffuse += (diffuseColor * lightIntensity);
+    if(lightIntensity > 0.0f)
+    {
+        float3 diffuse = saturate(textureColor); //디퓨즈 값
+        diffuse += (diffuseColor * lightIntensity);
+        diffuse = ceil(diffuse * 5) / 5.0f; //반올림
+        color = float4( textureColor * diffuse.xyz, 1);
 
+        color = saturate(color);
 
-	diffuse = ceil(diffuse * 5) / 5.0f; //반올림
+        reflection = normalize(2 * lightIntensity * input.normal - lightDir); 
+        specular = pow(saturate(dot(reflection, input.viewDirection)), specularPower);
+        //specular = saturate(ceil(specular * 10) / 10.0f);
 
-	color = float4( textureColor * diffuse.xyz, 1);
+        float fSpecularSmooth = smoothstep(0.005, 0.01f, specular);
+        specular = fSpecularSmooth * 1.0f;
+    }
 
-	// Edge 계산
+	color = color * textureColor;
+    color = saturate(color + specular);
+
+    // Edge 계산
     float depth = input.position.z / input.position.w;
     float2 dx = ddx(input.position.xy / input.position.w);
     float2 dy = ddy(input.position.xy / input.position.w);
