@@ -49,6 +49,8 @@ public:
 
 	void GetVideoCardInfo(char*, int&);
 
+	void SetCullMode(D3D11_CULL_MODE mode);
+
 private:
 	bool m_vsync_enabled;
 	int m_videoCardMemory;

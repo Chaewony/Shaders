@@ -75,7 +75,7 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
     color = saturate(color + specular);
 
     // Edge 계산
-    float depth = input.position.z / input.position.w;
+    /*float depth = input.position.z / input.position.w;
     float2 dx = ddx(input.position.xy / input.position.w);
     float2 dy = ddy(input.position.xy / input.position.w);
 
@@ -86,7 +86,7 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 
     edge = max(0, edge - EdgeWidth) / (1 - EdgeWidth);
     edge = pow(edge, 4);
-    color = lerp(color, EdgeColor, edge);
+    color = lerp(color, EdgeColor, edge);*/
 
 	return color; //최종 값
 }

@@ -131,6 +131,21 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
+	// Create the light shader object.
+	m_OutlineShader = new OutlineShaderClass;
+	if (!m_OutlineShader)
+	{
+		return false;
+	}
+
+	// Initialize the light shader object.
+	result = m_OutlineShader->Initialize(m_D3D->GetDevice(), hwnd);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the light shader object.", L"Error", MB_OK);
+		return false;
+	}
+
 	return true;
 }
 
@@ -142,6 +157,14 @@ void GraphicsClass::Shutdown()
 	{
 		delete m_Light;
 		m_Light = 0;
+	}
+
+	// Release the light shader object.
+	if (m_OutlineShader)
+	{
+		m_OutlineShader->Shutdown();
+		delete m_OutlineShader;
+		m_OutlineShader = 0;
 	}
 
 	// Release the light shader object.
@@ -232,7 +255,7 @@ bool GraphicsClass::Render(float rotation)
 
 	// Clear the buffers to begin the scene.
 	m_D3D->BeginScene(0.0f, 0.5f, 0.0f, 1.0f);
-
+	m_D3D->SetCullMode(D3D11_CULL_FRONT);
 	// Generate the view matrix based on the camera's position.
 //	m_Camera->Render();
 
@@ -260,7 +283,6 @@ bool GraphicsClass::Render(float rotation)
 	worldMatrix *= XMMatrixTranslation(5.0f, 0.0f, 0.0f);
 
 	m_Model->Render(m_D3D->GetDeviceContext());
-
 	result = m_PhongShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(),
 		worldMatrix, viewMatrix, projectionMatrix,
 		m_Model->GetTexture(),
@@ -278,6 +300,16 @@ bool GraphicsClass::Render(float rotation)
 	m_Model->Render(m_D3D->GetDeviceContext());
 
 	result = m_ToonShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(),
+		worldMatrix, viewMatrix, projectionMatrix,
+		m_Model->GetTexture(),
+		m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(),
+		m_Camera->GetPosition(), m_Light->GetSpecularColor(), m_Light->GetSpecularPower());
+	if (!result)
+	{
+		return false;
+	}
+	m_D3D->SetCullMode(D3D11_CULL_BACK);
+	result = m_OutlineShader->Render(m_D3D->GetDeviceContext(), m_Model->GetIndexCount(),
 		worldMatrix, viewMatrix, projectionMatrix,
 		m_Model->GetTexture(),
 		m_Light->GetDirection(), m_Light->GetAmbientColor(), m_Light->GetDiffuseColor(),

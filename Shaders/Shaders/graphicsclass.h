@@ -15,6 +15,7 @@
 #include "lightclass.h"
 #include "phongshaderclass.h"
 #include "toonshaderclass.h"
+#include "outlineshaderclass.h"
 
 
 /////////////
@@ -53,6 +54,7 @@ private:
 	LightClass* m_Light;
 	PhongShaderClass* m_PhongShader;
 	ToonShaderClass* m_ToonShader;
+	OutlineShaderClass* m_OutlineShader;
 };
 
 #endif

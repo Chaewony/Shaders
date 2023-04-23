@@ -488,3 +488,16 @@ void D3DClass::GetVideoCardInfo(char* cardName, int& memory)
 	memory = m_videoCardMemory;
 	return;
 }
+
+void D3DClass::SetCullMode(D3D11_CULL_MODE mode)
+{
+	D3D11_RASTERIZER_DESC cmdesc;
+
+	ZeroMemory(&cmdesc, sizeof(D3D11_RASTERIZER_DESC));
+	cmdesc.FillMode = D3D11_FILL_SOLID;
+	cmdesc.FrontCounterClockwise = true;
+	cmdesc.CullMode = mode;
+
+	m_device->CreateRasterizerState(&cmdesc, &m_rasterState);
+	m_deviceContext->RSSetState(m_rasterState);
+}

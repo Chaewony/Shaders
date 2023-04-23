@@ -26,6 +26,7 @@
     <ClCompile Include="graphicsclass.cpp" />
     <ClCompile Include="inputclass.cpp" />
     <ClCompile Include="lightclass.cpp" />
+    <ClCompile Include="outlineshaderclass.cpp" />
     <ClCompile Include="phongshaderclass.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="modelclass.cpp" />
@@ -43,6 +44,7 @@
     <ClInclude Include="graphicsclass.h" />
     <ClInclude Include="inputclass.h" />
     <ClInclude Include="lightclass.h" />
+    <ClInclude Include="outlineshaderclass.h" />
     <ClInclude Include="phongshaderclass.h" />
     <ClInclude Include="modelclass.h" />
     <ClInclude Include="systemclass.h" />
@@ -53,6 +55,8 @@
   <ItemGroup>
     <None Include="data\color.ps" />
     <None Include="data\color.vs" />
+    <None Include="data\outline.ps" />
+    <None Include="data\outline.vs" />
     <None Include="data\phong.ps" />
     <None Include="data\phong.vs" />
     <None Include="data\texture.ps" />

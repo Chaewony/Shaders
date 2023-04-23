@@ -10,9 +10,9 @@ CameraClass::CameraClass()
 	m_position.y = 0.0f;
 	m_position.z = -10.0f;
 
-	m_rotation.x = 0.0f;
-	m_rotation.y = 0.0f;
-	m_rotation.z = 0.0f;
+	m_rotation.x = 30.0f;
+	m_rotation.y = 60.0f;
+	m_rotation.z = 90.0f;
 
 	m_defaultForward = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
 	m_defaultRight = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
